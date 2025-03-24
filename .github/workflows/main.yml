@@ -1,0 +1,36 @@
+name: Build OSSC Firmware
+
+on:
+  push:
+    branches:
+      - main # Monitora alterações na branch "main"
+  pull_request:
+    branches:
+      - main # Também compila em solicitações de pull
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Runner que será usado
+
+    steps:
+      # Etapa 1: Checkout do código
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # Etapa 2: Configuração do ambiente de compilação
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make gcc # Adicione outras dependências, se necessário
+
+      # Etapa 3: Compilação
+      - name: Compile OSSC firmware
+        run: |
+          make all # Ajuste para o comando de build específico do repositório
+
+      # Etapa 4: Upload do binário como artefato
+      - name: Upload compiled firmware
+        uses: actions/upload-artifact@v3
+        with:
+          name: ossc-firmware
+          path: firmware.bin # Substitua pelo caminho do arquivo gerado
