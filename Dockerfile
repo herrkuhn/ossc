@@ -28,15 +28,22 @@ FROM ubuntu:25.04
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install RISC-V toolchain with confirmed available packages
-RUN apt update && \
-    apt install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+        libglib2.0-0 \
+        libxext6 \
+        libmpc3 \
+        libfontconfig1 \
+        locales \
         gcc-riscv64-unknown-elf \
         binutils-riscv64-unknown-elf \
         build-essential \
         picolibc-riscv64-unknown-elf \
-        libnewlib-dev && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
+        libnewlib-dev && \       
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 # Set up environment
 ENV QUARTUS_PATH=/opt/intelFPGA
