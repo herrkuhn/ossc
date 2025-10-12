@@ -21,25 +21,16 @@
 #define FIRMWARE_H_
 
 #include <stdint.h>
-#include "alt_types.h"
 #include "sysconfig.h"
 
 #define FW_VER_MAJOR            1
 #define FW_VER_MINOR            20
-
-#define PROFILE_VER_MAJOR       1
-#define PROFILE_VER_MINOR       12
-
-#define INITCFG_VER_MAJOR       1
-#define INITCFG_VER_MINOR       0
 
 #ifdef OSDLANG_JP
 #define FW_SUFFIX              "j"
 #else
 #define FW_SUFFIX              ""
 #endif
-
-#define FW_UPDATE_RETRIES       3
 
 typedef struct {
     char fw_key[4];
@@ -54,7 +45,14 @@ typedef struct {
 } __attribute__((packed)) fw_hdr;
 
 typedef struct {
-    uint32_t unused[29];
+    uint32_t sm_cur_state[4];
+    uint32_t force_early_confdone[4];
+    uint32_t wdog_timeout[4];
+    uint32_t wdog_enable[4];
+    uint32_t image_addr[4];
+    uint32_t force_int_osc[4];
+    uint32_t reg_trig_cnd[4];
+    uint32_t reset_timer;
     uint32_t reconfig_start;
 } rem_update_regs;
 
@@ -62,8 +60,8 @@ typedef struct {
     volatile rem_update_regs *regs;
 } rem_update_dev;
 
+int fw_init_secondary();
 int fw_update();
-
-void fw_update_commit(uint32_t* cluster_idx, uint8_t* databuf, uint32_t bytes_to_copy, uint16_t fs_csize, uint16_t fs_startsec);
+void fw_update_commit(uint32_t* cluster_idx, uint8_t* databuf, uint32_t bytes_to_copy, uint16_t fs_csize, uint16_t fs_startsec, uint32_t flash_addr);
 
 #endif

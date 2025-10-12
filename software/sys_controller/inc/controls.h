@@ -51,6 +51,10 @@ typedef enum {
     RC_SL_TYPE,
     RC_SL_PLUS,
     RC_SL_MINUS,
+    RC_SHMMODE_PLUS,
+    RC_SHMMODE_MINUS,
+    RC_SHMINT_PLUS,
+    RC_SHMINT_MINUS,
     RC_LM_MODE,
     RC_PHASE_PLUS,
     RC_PHASE_MINUS,
@@ -60,6 +64,7 @@ typedef enum {
 #define REMOTE_MAX_KEYS (RC_PROF_HOTKEY-RC_BTN1+1)
 
 void setup_rc();
+void set_default_keymap();
 int parse_control();
 
 #endif
