@@ -1,7 +1,9 @@
 ################################################################################
 # quartus image
 
-FROM ubuntu:25.04 as fpga_install
+ARG UBUNTU_VERSION=25.10
+
+FROM ubuntu:${UBUNTU_VERSION} as fpga_install
 
 ARG QUARTUS_MAJOR_VERSION=24.1
 ARG QUARTUS_MINOR_VERSION=0
@@ -23,7 +25,7 @@ RUN chmod a+x QuartusLiteSetup-${QUARTUS_MAJOR_VERSION}std.${QUARTUS_MINOR_VERSI
 ################################################################################
 # Main build image
 
-FROM ubuntu:25.04
+FROM ubuntu:${UBUNTU_VERSION}
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -43,12 +45,17 @@ RUN apt-get update && \
         libnewlib-dev && \       
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+    sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen en_US.UTF-8
 
 # Set up environment
-ENV QUARTUS_PATH=/opt/intelFPGA
-ENV QUARTUS_ROOTDIR=${QUARTUS_PATH}/quartus
-ENV SOPC_KIT_NIOS2=${QUARTUS_PATH}/nios2eds
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    QUARTUS_PATH=/opt/intelFPGA \
+    QUARTUS_ROOTDIR=/opt/intelFPGA/quartus \
+    SOPC_KIT_NIOS2=/opt/intelFPGA/nios2eds
+
 ENV PATH=${QUARTUS_ROOTDIR}/bin/:${QUARTUS_ROOTDIR}/linux64/gnu/:${QUARTUS_ROOTDIR}/sopc_builder/bin/:$PATH
 
 # Copy Quartus from the first stage
